@@ -1,0 +1,163 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - 101 Shar</title>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <link rel="shortcut icon" href="../../Assets/favicon.png" type="image/png">
+    <link rel="stylesheet" href="../../Content/css/style_layout.css">
+    <link rel="stylesheet" href="../../Content/css/category.css">
+    <link rel="stylesheet" href="../../Content/css/adaptiv.css">
+    <link rel="stylesheet" href="../../Content/css/Login.css" />
+</head>
+<body>
+    <div class="page">
+        <nav class="navbar navbar-expand-lg fixed-top" id="navbar">
+            <div class="navbar-container"> 
+                <a class="navbar-brand" href="/" title="Главная"><img class="logo_img" src="../../Assets/101_logo.png" /></a>
+                <div class="nav-adaptiv">
+                    <div class="collapse navbar-collapse" id="navbarText">
+
+                        <div class="navbar-nav mr-auto">
+                            <div class="nav-pages">
+                                @Html.Action("PagesMenuPartial", "Pages")
+                            </div>
+                            <div class="nav-pages">
+                                @if (Request.IsAuthenticated)
+                                {
+                                    <div>@Html.ActionLink("Выйти", "Logout", "Account", null, new { @class = "navbar-text", style = "text-decoration: none" })</div>
+                                }
+                                else
+                                {
+                                    if (ViewBag.Title == "Войти")
+                                    {
+                                        <div class="navbar-text">@Html.ActionLink("Войти", "Login", "Account", null, new { @class = "active", style = "text-decoration: none" })</div>
+                                    }
+                                    else
+                                    {
+                                        <div>@Html.ActionLink("Войти", "Login", "Account", null, new { @class = "navbar-text", style = "text-decoration: none" })</div>
+                                    }
+                                }
+                            </div>
+                            <div class="nav-pages">
+                                @if (Request.IsAuthenticated && User.IsInRole("User"))
+                                {
+                                    if (ViewBag.Title == "User Profile")
+                                    {
+                                        <div class="active nav-name">@Html.Action("UserNavPartial", "Account", new { area = "" })</div>
+                                    }
+                                    else
+                                    {
+                                        <div>@Html.Action("UserNavPartial", "Account", new { area = "" })</div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        @if (Request.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <span class="navbar-text">
+                                @Html.ActionLink("Админ зона", "Index", "Dashboard", new { area = "Admin" }, null)
+                            </span>
+                        }
+                        else
+                        {
+                            if (ViewBag.Title != "Cart Details")
+                            {
+                                <span class="navbar-text">
+                                    @Html.Action("CartPartial", "Cart")
+                                </span>
+                            }
+
+                        }
+                    </div>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                        <div class="navbar-toggler-icon"><img src="../../Assets/nav-menu.png" /></div>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <button class="nav-btn open-btn" title="Каталог товаров">
+            <img src="../../Assets/squared-menu.png" alt="альтернативный текст">
+        </button>
+        <div>
+            <div class="col-sm-12 col-md-3 list-group navmenu categories" id="mySidenav">
+                <div class="nav nav-white ">
+                    <button class="nav-btn close-btn">
+                        <img src="../../Assets/delete.png" />
+                    </button>
+                    @Html.Action("CategoryMenuPartial", "Shop")
+                </div>
+            </div>
+            @if (ViewBag.Sidebar == "Да")
+            {
+                <div class="body_content">
+                    @RenderBody()
+                </div>
+                <div class="body_content">
+                    @Html.Action("SidebarPartial", "Pages")
+                </div>
+            }
+            else
+            {
+                <div>
+                    @RenderBody()
+                </div>
+            }
+        </div>
+        <footer>
+            <div class="footer">
+                <div class="footer-logo">
+                    <div class="footer-logo_img">
+                        <img class="logo_img" src="~/Assets/101_logo.png" />
+                    </div>
+                    <div class="footer-logo_text">
+                        <p>&copy; @DateTime.Now.Year - 101 Shar</p>
+                    </div>
+                </div>
+                <div class="footer-info">
+                    <div class="footer-contacts">
+                        <div class="footer-life number-life">
+                            <a href="tel:+380631421515">+38 063-142-15-15</a>
+                        </div>
+                        <div class="footer-mts number-mts">
+                            <a href="tel:+380661421515">+38 066-142-15-15</a>
+                        </div>
+                        <div class="footer-kyiv number-kyiv">
+                            <a href="tel:+380681421515">+38 068-142-15-15</a>
+                        </div>
+                    </div>
+                    <div class="footer-sosial">
+                        <div class="footer-sosial-media">
+                            <div class="footer-inst">
+                                <a href="https://www.instagram.com/101shar.com.ua/" target="_blank"><img src="~/Assets/instagram.png" /></a>
+                            </div>
+                            <div class="footer-teleg">
+                                <img src="~/Assets/telegram.png" />
+                            </div>
+                            <div class="footer-email">
+                                <a href="mailto:101shar.com@gmail.com"><img src="~/Assets/gmail.png" /></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/scripts")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="../../Scripts/script/script_load.js"></script>
+    <script src="../../Scripts/script/script_categories.js"></script>
+    <script src="../../Scripts/script/thank_for_order.js"></script>
+</body>
+</html>

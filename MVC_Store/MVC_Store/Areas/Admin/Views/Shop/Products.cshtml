@@ -1,0 +1,122 @@
+﻿@model IEnumerable<MVC_Store.Models.ViewModels.Shop.ProductVM>
+
+@{
+    ViewBag.Title = "Товары";
+}
+
+@using PagedList.Mvc;
+@using PagedList;
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+<h2>Товары</h2>
+<br />
+<select id="SelectCategory" name="SelectCategory">
+    <option value="0">All</option>
+    @foreach (var item in ViewBag.Categories)
+    {
+        if (ViewBag.SelectedCat == item.Value)
+        {
+            <option selected="selected" value="@item.Value">@item.Text</option>
+        }
+        else
+        {
+            <option value="@item.Value">@item.Text</option>
+        }
+    }
+
+</select>
+<br />
+<br />
+
+<p>
+    @Html.ActionLink("Добавить новый продукт", "AddProduct", new { @class = "btn btn-success" })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Название
+        </th>
+
+        <th>
+            Описание
+        </th>
+        <th>
+            Цена
+        </th>
+
+        <th>
+            Фотография
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var product in ViewBag.onePageOfProducts)
+    {
+        <tr>
+            <td>
+                @product.Name
+            </td>
+            <td>
+                @product.Description
+            </td>
+            <td>
+                @product.Price
+            </td>
+            <td>
+                <a href="/admin/shop/EditProduct/@product.Id">
+                    @if (@product.ImageName == null)
+                    {
+                        <img src="~/Content/images/no_image.png" />
+                    }
+                    else
+                    {
+                        <img src="/Images/Uploads/Products/@product.Id/Thumbs/@product.ImageName" />
+                    }
+
+                </a>
+            </td>
+            <td>
+                @Html.ActionLink("Изменить", "EditProduct", new { id = product.Id }, new { @class = "btn btn-info" })
+
+                @Html.ActionLink("Добавить акцию", "AddSale", new { id = product.Id }, new { @class = "btn btn-info" })
+
+                @Html.ActionLink("Удалить", "DeleteProduct", new { id = product.Id }, new { @class = "btn btn-danger delete" })
+            </td>
+        </tr>
+    }
+
+
+</table>
+
+@Html.PagedListPager((IPagedList)ViewBag.onePageOfProducts, page => Url.Action("Products", new { page, catId = ViewBag.SelectedCat }))
+
+@section Scripts{
+
+    <script>
+        $(function () {
+
+            /* Select product from specified category */
+
+            $("#SelectCategory").on("change", function () {
+                var url = $(this).val();
+
+                if (url) {
+                    window.location = "/admin/shop/Products?catId=" + url;
+                }
+                return false;
+            });
+
+            /*-----------------------------------------------------------*/
+
+            /* Confirm page deletion */
+
+            $("a.delete").click(function () {
+                if (!confirm("Вы точно хотите удалить товар?")) return false;
+            });
+
+            /*-----------------------------------------------------------*/
+        });
+    </script>
+
+}

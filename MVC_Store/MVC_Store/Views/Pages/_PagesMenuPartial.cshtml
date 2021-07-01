@@ -1,0 +1,20 @@
+﻿@model IEnumerable<MVC_Store.Models.ViewModels.Pages.PageVM>
+
+
+@foreach (var item in Model)
+{
+
+    if (item.Title == "Акции")
+    {
+        <a class="nav-link" href="/shop/category/акции">@item.Title</a>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="/@item.Slug">@item.Title</a>
+        </li>
+    }
+
+
+}
+

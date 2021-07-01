@@ -1,0 +1,99 @@
+﻿@model IEnumerable<MVC_Store.Models.ViewModels.Pages.PageVM>
+
+@{
+    ViewBag.Title = "Страницы";
+}
+
+<h2>Страницы</h2>
+
+@if (TempData["SM"] != null)
+{
+    <div  class="alert alert-success">
+        @TempData["SM"]
+    </div>
+}
+
+<p>
+    @Html.ActionLink("Создать новую страницу", "AddPage","",new { @class = "btn btn-success" })
+</p>
+
+
+@if (!Model.Any()) {
+    <h1 class="text-center"> У Вас нету страниц</h1>
+}
+else { 
+
+<table class="table sorting" id="pages">
+    <tr class="home">
+        <th>
+            Название
+        </th>
+        <th>
+            Короткое название
+        </th>
+        <th>
+            Боковая панель
+        </th>
+
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr id="@item.Id" class="@item.Slug">
+        <td>
+            @if(item.Slug != "home")
+            {
+                 <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+            }
+            @Html.DisplayFor(modelItem => item.Title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Slug)
+        </td>
+
+        <td>
+            @Html.DisplayFor(modelItem => item.HasSidebar)
+        </td>
+        <td>
+            @Html.ActionLink("Изменить", "EditPage", new { id = item.Id }) |
+            @Html.ActionLink("Детали", "PageDetails", new { id = item.Id }) |
+            @if(item.Slug != "home")
+            {
+                string slash = " | ";
+                @slash;
+            @Html.ActionLink("Удалить", "DeletePage", new { id = item.Id }, new { @class = "delete" })
+            }
+        </td>
+    </tr>
+}
+
+</table>
+}
+
+
+@section Scripts
+{
+    <script>
+        $(function () {
+        /*confirm delete*/
+            $("a.delete").click(function () {
+                if (!confirm("Вы точно хотите удалить страницу?")) return false;
+            });
+
+            $("table#pages tbody").sortable({
+                items: "tr:not(.home)",
+                placeholder: "ui-state-highlight",
+                update: function () {
+                    var ids = $("table#pages tbody").sortable("serialize");
+                    var url = "/Admin/Pages/ReorderPages";
+
+                    $.post(url, ids, function (data) {
+
+                    });
+
+                }
+            });
+        });
+    </script>
+    
+}

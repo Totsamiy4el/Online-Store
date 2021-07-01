@@ -1,0 +1,109 @@
+﻿@model MVC_Store.Models.ViewModels.Shop.ProductVM
+
+@{
+    ViewBag.Title = Model.Name;
+}
+
+
+
+<div class="product-cart-info">
+    <div class="product-photos">
+        <div class="product-main-img">
+            <img src="/Images/Uploads/Products/@Model.Id/Thumbs/@Model.ImageName" />
+        </div>
+        <div class="product-extra-imgs-title">
+            Фотографии товара
+        </div>
+        <div class="product-extra-imgs">
+            @foreach (var item in Model.GalleryImages)
+            {
+                <div class="extra-imgs">
+                    <a class="fancybox" rel="gallery1" href="/Images/Uploads/Products/@Model.Id/Gallery/@item">
+                        <img src="/Images/Uploads/Products/@Model.Id/Gallery/Thumbs/@item" />
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="product-info">
+        <div class="product-name">
+            @Model.Name
+        </div>
+        <div class="product-inventory">
+            <div class="product-price">
+                @Html.DisplayFor(model => model.Price) UAH
+            </div>
+          
+            <div class="product-btn">
+
+                <a href="#" class="addtocart">
+                    <div class="addtocart">
+                        <div class="addtocart-btn">В корзину</div>
+
+                        <span class="loader">
+                            <img src="~/Content/images/ajax-loader.gif" height="100" width="150" />
+                        </span>
+
+                    </div>
+                </a>
+                <div class="ajaxmsg">
+                    Вы добавили товар в корзину
+                </div>
+
+            </div>
+        </div>
+        <div class="product-description">
+            <div class="product-description-title">
+                Описание
+            </div>
+            <div class="product-description-text">
+                @Html.DisplayFor(model => model.Description)
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<hr />
+
+
+
+@section Scripts {
+
+
+    <link href="~/Content/jquery.fancybox.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery.fancybox.js"></script>
+
+    <script>
+        $(function () {
+            $(".fancybox").fancybox();
+        });
+    </script>
+    <script>
+/********************Add to cart*********************/
+$(function () {
+    $("a.addtocart").click(function (e) {
+        e.preventDefault();
+
+        $("span.loader").addClass("ib");
+
+        var url = "/cart/AddToCartPartial";
+
+        $.get(url, { id: @Model.Id
+    }, function myfunction(data) {
+        $(".ajaxcart").html(data);
+        }).done(function () {
+            $("span.loader").removeClass("ib");
+            $("div.ajaxmsg").addClass("ib");
+
+            setTimeout(function () {
+                $("div.ajaxmsg").fadeOut("fast");
+                $("div.ajaxmsg").removeClass("ib");
+            }, 2000);
+        });
+    });
+});
+/****************************************************/
+    </script>
+}

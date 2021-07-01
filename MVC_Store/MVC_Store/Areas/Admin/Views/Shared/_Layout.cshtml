@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Админ зона</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="container-fluid">
+            @Html.ActionLink("Главная страница", "Index", "Dashboard","", new { @class = "navbar-brand" })
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
+
+
+                    <li class="nav-item">
+                        @Html.ActionLink("Категории", "Categories", "Shop", "", new { @class = "nav-link" })
+                    </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("Товары", "Products", "Shop", "", new { @class = "nav-link" })
+                    </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("Заказы", "Orders", "Shop", "", new { @class = "nav-link" })
+                    </li>
+                </ul>
+
+                <!--New right menu-->
+                <ul class="navbar-nav ml-auto">
+                    <li>
+                        <a href="/../../" class="navbar-brand" target="_blank">Вернуться на сайт</a>
+                    </li>
+                </ul>
+
+                @*<span class="navbar-text">
+                        Navbar text with an inline element
+                    </span>*@
+            </div>
+        </div>
+    </nav>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/ckeditor")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

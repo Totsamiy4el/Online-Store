@@ -1,0 +1,41 @@
+﻿@model MVC_Store.Models.ViewModels.Pages.PageVM
+
+@{
+    ViewBag.Title = "Детали о странице";
+}
+
+<h2>Page Details</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            <h5 class="control-label col-md-2">Название</h5>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+            <h5 class="control-label col-md-2">Короткое название</h5>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Slug)
+        </dd>
+
+        <dt>
+            <h5 class="control-label col-md-2">Описание</h5>
+        </dt>
+
+        <dd>
+            @Html.Raw(Model.Body)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "EditPage", new { id = Model.Id }) |
+    @Html.ActionLink("Back to Pages", "Index")
+</p>

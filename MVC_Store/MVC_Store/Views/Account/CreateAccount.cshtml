@@ -1,0 +1,61 @@
+﻿@model MVC_Store.Models.ViewModels.Account.UserVM
+
+@{
+    ViewBag.Title = "Создать аккаунт";
+}
+
+
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+<h2 class="form_title">Создать аккаунт</h2>
+    <div class="form-horizontal">
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form_group">            
+                <input class="form_input" id="FirstName" name="FirstName" type="text" placeholder="Имя">
+                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form_group">
+                <input class="form_input" id="LastName" name="LastName" type="text" placeholder="Пароль">
+                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form_group">
+            
+            
+            <input class="form_input" id="EmailAdress" name="EmailAdress" type="email" placeholder="Почта">
+                @Html.ValidationMessageFor(model => model.EmailAdress, "", new { @class = "text-danger" })
+            
+        </div>
+
+        <div class="form_group">
+
+            <input class="form_input" id="Number" name="Number" type="text" placeholder="Номер телефона">
+                @Html.ValidationMessageFor(model => model.Number, "", new { @class = "text-danger" })
+            
+        </div>
+
+        <div class="form_group">
+
+                <input class="form_input" id="Password" name="Password" type="password" placeholder="Пароль" />
+                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+
+        </div>
+
+        <div class="form_group">
+
+                <input class="form_input" id="ConfirmPassword" name="ConfirmPassword" type="password" placeholder="Подтверждение пароля" />
+                @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+           
+        </div>
+
+        <div class="form_group btn_create">
+            
+                <input type="submit" value="Создать" class="form_button" />
+        </div>
+    </div>
+}
+

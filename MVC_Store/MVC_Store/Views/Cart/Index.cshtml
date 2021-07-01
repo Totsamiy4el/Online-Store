@@ -1,0 +1,365 @@
+﻿@model IEnumerable<MVC_Store.Models.ViewModels.Cart.CartVM>
+
+@{
+    ViewBag.Title = "Корзина";
+}
+
+
+
+@if (ViewBag.Message == "Ваша корзина пуста")
+{
+    <div id="cart-title">
+        <h3>@ViewBag.Message</h3>
+    </div>
+}
+else
+{
+
+    <div class="ajaxbg">
+        <canvas id="c"></canvas>
+        <div id="overlay"></div>
+        <p id="overlay-p">Спасибо за заказ</p>
+    </div>
+
+    <div class="shop-cart-wrap">
+
+        @foreach (var item in Model)
+        {
+
+            <div class="shop-cart-item">
+                <div class="shop-cart-img">
+                    <img src="/Images/Uploads/Products/@item.ProductId/Thumbs/@item.Image" />
+                </div>
+                <div class="shop-cart-info">
+                    <div class="shop-cart-deskrip">
+                        <div class="shop-cart-name">
+                            @Html.DisplayFor(modelItem => item.ProductName)
+                        </div>
+                        <div class="shop-cart-price">
+                            @Html.DisplayFor(modelItem => item.Price) UAH
+                        </div>
+                    </div>
+
+
+
+                    <div class="shop-cart-info-counter">
+                        <div class="shop-cart-counter">
+                            <a href="#" class="decproduct" data-id="@item.ProductId"><img src="../../Assets/minus.png" /></a>
+                            <div class="qty@(item.ProductId)">
+                                @Html.DisplayFor(modelItem => item.Quantity)
+                            </div>
+                            <a href="#" class="incproduct" data-id="@item.ProductId"><img src="../../Assets/plus.png" /></a>
+                        </div>
+                        <div class="total@(item.ProductId)">
+                            @Html.DisplayFor(modelItem => item.Total) UAH
+                        </div>
+
+                        <a href="#" class="removeproduct" data-id="@item.ProductId"><img src="../../Assets/delete-bin.png" /></a>
+                    </div>
+                </div>
+            </div>
+
+
+        }
+
+        <div class="form_group">
+            <a class="postcard" href="cart/AddToCartCard">
+                <div>Добавить открытку к заказу (+20 UAH)
+                <img src="../../Assets/love-letter.png"/>
+                </div>
+            </a>
+            <input class="form_input" id="CardDeliveryText" name="CardDeliveryText" type="text" placeholder="Текст открытки">
+        </div>
+        @if (!Request.IsAuthenticated)
+        {
+            <h4>Для того что бы сделать заказ, вам нужно зарегестрироваться формой ниже</h4>
+            <div class="regi">
+                <input class="form_input" id="FirstName" name="FirstName" type="text" placeholder="Имя">
+                <input class="form_input" id="LastName" name="LastName" type="text" placeholder="Фамилия">
+                <input class="form_input" id="Number" name="Number" type="text" placeholder="Номер телефона">
+                <input class="form_input" id="EmailAdress" name="EmailAdress" type="text" placeholder="Почта">
+                <input class="form_input" id="Password" name="Password" type="text" placeholder="Пароль">
+                <input class="registration" style="display:none" value="1" />
+            </div>
+        }
+        else
+        {
+            <input class="registration" style="display:none" value="2" />
+        }
+    <div id="delivery">
+        <form id="form_for-register">
+            <input type="radio" name="delivery" id="deliveryKyiv" value="1" />
+            <label>Доставка по Киеву</label>
+            <br />
+            <input type="radio" name="delivery" id="deliveryPoshta" value="2" />
+            <label>Доставка Новой Почтой</label>
+            <br />
+            <input type="radio" name="delivery" id="deliveryYourself" value="3" />
+            <label>Самовывоз</label>
+            <br />
+        </form>
+        <div>
+            <div class="delivery-Kyiv visiblee">
+                <div class="form_group">
+
+                    <input class="form_input" id="DateDelivery" name="DateDelivery" type="text" placeholder="Желаемая дата">
+                </div>
+                <div class="form_group">
+                    <input class="form_input" id="TimeDelivery" name="TimeDelivery" type="text" placeholder="Желаемое время">
+                </div>
+                <div class="form_group">
+
+                    <input class="form_input" id="AdressDelivery" name="AdressDelivery" type="text" placeholder="Адрес доставки">
+                </div>
+
+            </div>
+            <div class="delivery-Poshta visiblee">
+                <div class="form_group">
+
+                    <input class="form_input" id="CityDelivery" name="CityDelivery" type="text" placeholder="Город">
+                </div>
+                <div class="form_group">
+
+                    <input class="form_input" id="DeliveryPoshtaNumber" name="DeliveryPoshtaNumber" type="text" placeholder="Номер отделения">
+                </div>
+
+            </div>
+            <div class="delivery-Yourself visiblee">
+                Самовывоз с Виноградаря
+            </div>
+        </div>
+    </div>
+        <div class="final-order">
+            <div class="grandtotal">
+                <b>Сумма заказа: </b><span>@ViewBag.GrandTotal UAH</span>
+            </div>
+            <button id="checkout"></button>
+            <a href="#" class="placeorder order-btn">Сделать заказ</a>
+        </div>
+
+    </div>
+}
+
+@section Scripts{
+    <script>
+        var isItWorking = 0;
+
+        $(function () {
+
+            $("a.incproduct").click(function (e) {
+                e.preventDefault();
+
+                var productId = $(this).data("id");
+                var url = "/cart/IncrementProduct";
+
+                $.getJSON(url, { productId: productId }, function (data) {
+                    $("div.qty" + productId).html(data.qty);
+
+                    var price = data.qty * data.price;
+                    var priceHtml = price.toFixed(2) + " UAH";
+
+                    $("div.total" + productId).html(priceHtml);
+
+                    var gt = parseFloat($("div.grandtotal span").text());
+                    var grandtotal = (gt + data.price).toFixed(2);
+
+                    $("div.grandtotal span").text(grandtotal);
+                });
+            });
+        });
+        /*-----------------------------------------------------------*/
+
+        /* Decriment product */
+        $(function () {
+
+            $("a.decproduct").click(function (e) {
+                e.preventDefault();
+
+                var $this = $(this);
+                var productId = $(this).data("id");
+                var url = "/cart/DecrementProduct";
+
+                $.getJSON(url, { productId: productId }, function (data) {
+
+                    if (data.qty == 0) {
+                        $this.parent().fadeOut("fast", function () {
+                            location.reload();
+                        });
+                    }
+                    else {
+                        $("div.qty" + productId).html(data.qty);
+
+                        var price = data.qty * data.price;
+                        var priceHtml = price.toFixed(2) + " UAH";
+
+                        $("div.total" + productId).html(priceHtml);
+
+                        var gt = parseFloat($("div.grandtotal span").text());
+                        var grandtotal = (gt - data.price).toFixed(2);
+                        $("div.grandtotal span").text(grandtotal);
+                    }
+                });
+            });
+        });
+        /*-----------------------------------------------------------*/
+
+        /* Remove product */
+        $(function () {
+
+            $("a.removeproduct").click(function (e) {
+                e.preventDefault();
+
+                var $this = $(this);
+                var productId = $(this).data("id");
+                var url = "/cart/RemoveProduct";
+
+                $.get(url, { productId: productId }, function (data) {
+                    location.reload();
+                });
+            });
+        });
+
+
+        $(function () {
+            var smth = "";
+            $('#form_for-register input').on('change', function () {
+                var delivery = ($('input[name=delivery]:checked', '#form_for-register').val());
+
+                smth = delivery;
+
+            });
+            $("a.placeorder").click(function (e) {
+                e.preventDefault();
+
+                var $this = $(this);
+                var url = "/cart/PlaceOrder";
+                var check = "/cart/Check";
+                var dateDelivery = $("#DateDelivery").val();
+                var timeDelivery = $("#TimeDelivery").val();
+                var adressDelivery = $("#AdressDelivery").val();
+                var cityDelivery = $("#CityDelivery").val();
+                var deliveryPoshtaNumber = $("#DeliveryPoshtaNumber").val();
+                var cardDeliveryText = $("#CardDeliveryText").val();
+                var firstName = $("#FirstName").val();
+                var lastName = $("#LastName").val();
+                var number = $("#Number").val();
+                var emailAdress = $("#EmailAdress").val();
+                var password = $("#Password").val();
+                var registration = $(".registration").val();
+                var dontWork = 0;
+                var d = "";
+
+                if (smth == 0) {
+                    alert("Заполните все данные");
+                    dontWork++;
+                }
+
+                if (smth == 1) {
+                    if (dateDelivery == "" || timeDelivery == "" || adressDelivery == "") {
+                        alert("Заполните все данные");
+                        dontWork++;
+                    }
+                }
+
+                if (smth == 2) {
+                    if (cityDelivery == "" || deliveryPoshtaNumber == "") {
+                        alert("Заполните все данные");
+                        dontWork++;
+                    }
+                }
+                if (registration == "1") {
+                    if (firstName == "" || lastName == "" || number == "" || emailAdress == "" || password == "") {
+                        alert("Заполните все данные в форме регистрации");
+                        dontWork++;
+                    }
+                }
+
+                if (dontWork == 0) {
+                    console.log(number);
+                    $.ajax({
+                        url: 'cart/Check',
+                        type: 'Post',
+                        data: { numberShoto: number },
+                        success: function (result) {
+                            console.log(result);
+                            if (result == "False") {
+                                $(function () {
+                                    $('html, body').animate({
+                                        scrollTop: $('.ajaxbg').offset().top
+                                    }, 0);
+
+                                    $(".ajaxbg").show().delay(3000);
+
+                                    setTimeout(function () {
+                                        window.location.href = 'https://localhost:44323/';
+                                    }, 5 * 1000);
+                                });
+
+                                $.post(url,
+                                    {
+                                        date: dateDelivery,
+                                        time: timeDelivery,
+                                        adress: adressDelivery,
+                                        city: cityDelivery,
+                                        poshta: deliveryPoshtaNumber,
+                                        cardText: cardDeliveryText,
+                                        name: firstName,
+                                        namelast: lastName,
+                                        numberPhone: number,
+                                        email: emailAdress,
+                                        passwordAcc: password,
+                                        deliv: smth
+
+                                    },
+                                    function (data) {
+                                        $(".ajaxbg");
+                                        setTimeout(function () {
+                                            $('form input[name = "submit"]').click();
+                                        }, 2000);
+                                    });
+                            }
+                            else {
+                                alert("Номер уже зарегестрирован, войдите в аккаунт или введите другой номер");
+
+                            }
+
+                        }
+
+                    });
+                }
+
+
+
+
+
+
+
+            });
+        });
+
+    </script>
+    <script>
+        const DeliveryKyiv = document.getElementById('deliveryKyiv');
+        const ClassPoshta = document.querySelector('.delivery-Poshta');
+        const ClassKyuv = document.querySelector('.delivery-Kyiv');
+        const ClassYourself = document.querySelector('.delivery-Yourself');
+        DeliveryKyiv.addEventListener("click", () => {
+            ClassKyuv.classList.remove('visiblee');
+            ClassPoshta.classList.add('visiblee');
+            ClassYourself.classList.add('visiblee');
+        });
+        const DeliveryPoshta = document.getElementById('deliveryPoshta');
+
+        DeliveryPoshta.addEventListener("click", () => {
+            ClassKyuv.classList.add('visiblee');
+            ClassPoshta.classList.remove('visiblee');
+            ClassYourself.classList.add('visiblee');
+        });
+        const DeliveryYourself = document.getElementById('deliveryYourself');
+        DeliveryYourself.addEventListener("click", () => {
+            ClassKyuv.classList.add('visiblee');
+            ClassPoshta.classList.add('visiblee');
+            ClassYourself.classList.remove('visiblee');
+        });
+    </script>
+}

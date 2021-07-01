@@ -1,0 +1,55 @@
+﻿@model IEnumerable<MVC_Store.Models.ViewModels.Shop.ProductVM>
+
+@{
+    ViewBag.Title = ViewBag.CategoryName;
+}
+
+
+
+<div class="product-wrapper">
+
+
+    @foreach (var item in Model)
+    {
+
+    <div class="product">
+        @if (item.OldPrice == 0)
+        {
+        }
+        else
+        {
+        <div class="product-icon-sales">
+            <img src="../../Assets/sales.png"/>
+        </div>
+        }
+
+                <div class="product-icon">
+                    <a href="/shop/product-details/@item.Slug">
+                        <img src="/Images/Uploads/Products/@item.Id/Thumbs/@item.ImageName" />
+                    </a>
+                </div>
+                <div class="product-name">
+                    @Html.DisplayFor(modelItem => item.Name)
+                </div>
+
+                <div class="product-price">
+                    @Html.DisplayFor(modelItem => item.Price) UAH
+                </div>
+                @if (item.OldPrice == 0)
+                {
+                }
+                else
+                {
+                    <div class="product-price old">
+
+                        <s>@Html.DisplayFor(modelItem => item.OldPrice) UAH</s>
+                    </div>
+                }
+    <a href="/shop/product-details/@item.Slug" class="product-btn">
+        
+            Подробнее
+        
+    </a>
+            </div>
+        }
+    </div>

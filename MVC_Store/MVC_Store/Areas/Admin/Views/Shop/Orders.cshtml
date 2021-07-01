@@ -1,0 +1,90 @@
+﻿@model IEnumerable<MVC_Store.Areas.Admin.Models.ViewModels.Shop.OrdersForAdminVM>
+
+@{
+    ViewBag.Title = "Заказы";
+}
+
+
+<h2>Заказы</h2>
+
+@if (!Model.Any())
+{
+    <h2 class="text-center">У вас нету заказов</h2>
+}
+else
+{
+
+    <table class="table">
+        <tr>
+            <th>
+                Номер заказа
+            </th>
+            <th>
+                Телефон
+            </th>
+            <th>
+                Детали заказа
+            </th>
+            <th>Способ доставки</th>
+            <th>Текст в открытке(если открытка есть в деталях заказа)</th>
+            <th>
+                Время заказа
+            </th>
+            <th>
+                Сумма заказа
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+
+                <td>
+                    @foreach (var item2 in item.ProductsAndQty)
+                    {
+                        @item2.Key @:x @item2.Value <br />
+
+                        
+                    }
+                    @Html.DisplayFor(modelItem => item.Extra)
+                </td>
+                <td>
+                    @if (item.DeliveryMethod == "1")
+                    {
+                        <h4>Доставка по Киеву</h4>
+                        <h4>Желаемая дата доставки = @Html.DisplayFor(modelItem => item.DateDelivery)</h4>
+                        <h4>Желаемое время доставки = @Html.DisplayFor(modelItem => item.TimeDelivery)</h4>
+                        <h4>Адрес доставки = @Html.DisplayFor(modelItem => item.AdressDelivery)</h4>
+                    }
+                    @if (item.DeliveryMethod == "2")
+                    {
+                        <h4>Доставка через новую почту</h4>
+                        <h4>Город = @Html.DisplayFor(modelItem => item.CityDelivery)</h4>
+                        <h4>Номер отделения = @Html.DisplayFor(modelItem => item.DeliveryPoshtaNumber)</h4>
+                    }
+                    @if (item.DeliveryMethod == "3")
+                    {
+                        <h4>Самовывоз</h4>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CardDeliveryText)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Total)
+                </td>
+
+            </tr>
+        }
+
+    </table>
+}
